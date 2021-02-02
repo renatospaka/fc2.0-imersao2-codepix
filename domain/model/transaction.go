@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	TransactionPendind string = "pending"
-	TransactionComplete string = "complete"
-	TransactionError string = "error"
+	TransactionPendind   string = "pending"
+	TransactionComplete  string = "complete"
+	TransactionError     string = "error"
 	TransactionConfirmed string = "confirmed"
 )
 
@@ -28,11 +28,13 @@ type Transactions struct {
 type Transaction struct {
 	Base              `valid:"required"`
 	AccountFrom       *Account `valid:"-"`
+	AccountFromID     string   `gorm:"column:account_from_id;type:uuid" valid:"notnull"`
 	PixKeyTo          *PixKey  `valid:"-"`
-	Amount            float64  `json:"amount" valid:"notnull"`
-	Status            string   `json:"status" valid:"notnull"`
-	Description       string   `json:"description" valid:"notnull"`
-	CancelDescription string   `json:"cancel_description" valid:"-"`
+	PixIdTo           string   `gorm:"column:pix_key_id_to;type:uuid" valid:"notnull"`
+	Amount            float64  `json:"amount" gorm:"type:float" valid:"notnull"`
+	Status            string   `json:"status" gorm:"type:varchar(20)" valid:"notnull"`
+	Description       string   `json:"description" gorm:"type:varchar(255)" valid:"notnull"`
+	CancelDescription string   `json:"cancel_description" gorm:"type:varchar(255)" valid:"-"`
 }
 
 func (t *Transaction) isValid() error {
@@ -43,8 +45,8 @@ func (t *Transaction) isValid() error {
 	}
 
 	if t.Status != TransactionComplete &&
-	t.Status != TransactionPendind &&
-	t.Status != TransactionError {
+		t.Status != TransactionPendind &&
+		t.Status != TransactionError {
 		return errors.New("Invalid status for transaction.")
 	}
 
@@ -59,12 +61,12 @@ func (t *Transaction) isValid() error {
 }
 
 func NewTransaction(accountFrom *Account, amount float64, pixKey *PixKey, description string) (*Transaction, error) {
-	t :=Transaction{
-		AccountFrom:       accountFrom,
-		PixKeyTo:          pixKey,
-		Amount:            amount,
-		Status:            TransactionPendind,
-		Description:       description,
+	t := Transaction{
+		AccountFrom: accountFrom,
+		PixKeyTo:    pixKey,
+		Amount:      amount,
+		Status:      TransactionPendind,
+		Description: description,
 	}
 	t.ID = uuid.NewV4().String()
 	t.CreatedAt = time.Now()
@@ -77,7 +79,7 @@ func NewTransaction(accountFrom *Account, amount float64, pixKey *PixKey, descri
 	return &t, nil
 }
 
-func (t* Transaction) Complete() error {
+func (t *Transaction) Complete() error {
 	t.Status = TransactionComplete
 	t.UpdatedAt = time.Now()
 
@@ -85,7 +87,7 @@ func (t* Transaction) Complete() error {
 	return err
 }
 
-func (t* Transaction) Cancel(description string) error {
+func (t *Transaction) Cancel(description string) error {
 	t.Status = TransactionError
 	t.UpdatedAt = time.Now()
 	t.CancelDescription = description
@@ -94,7 +96,7 @@ func (t* Transaction) Cancel(description string) error {
 	return err
 }
 
-func (t* Transaction) Confirm() error {
+func (t *Transaction) Confirm() error {
 	t.Status = TransactionConfirmed
 	t.UpdatedAt = time.Now()
 
