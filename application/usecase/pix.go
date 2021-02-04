@@ -1,8 +1,7 @@
 package usecase
 
 import (
-	"fmt"
-
+	//"github.com/codeedu/imersao/codepix-go/domain/model"
 	"github.com/renatospaka/imersao/codepix-go/domain/model"
 )
 
@@ -10,8 +9,8 @@ type PixUseCase struct {
 	PixKeyRepository model.PixKeyRepositoryInterface
 }
 
-func (p *PixUseCase) RegisterKey(key string, kind string, accountID string) (*model.PixKey, error) {
-	account, err := p.PixKeyRepository.FindAccount(accountID)
+func (p *PixUseCase) RegisterKey(key string, kind string, accountId string) (*model.PixKey, error) {
+	account, err := p.PixKeyRepository.FindAccount(accountId)
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +22,7 @@ func (p *PixUseCase) RegisterKey(key string, kind string, accountID string) (*mo
 
 	p.PixKeyRepository.RegisterKey(pixKey)
 	if pixKey.ID == "" {
-		return nil, fmt.Errorf("Unable to create a key at the moment.")
+		return nil, err
 	}
 
 	return pixKey, nil
