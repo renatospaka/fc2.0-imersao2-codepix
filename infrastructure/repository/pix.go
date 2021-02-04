@@ -35,45 +35,45 @@ func(r PixKeyDbRepository) RegisterKey(pixKey *model.PixKey) (*model.PixKey, err
 	return pixKey, nil
 }
 
-func(r PixKeyDbRepository) FindKeyByKind(key string, kind string) (*model.PixKey error) {
+func(r PixKeyDbRepository) FindKeyByKind(key string, kind string) (*model.PixKey, error) {
 	var pixKey model.PixKey
 
 	r.Db.Preload("Account.Bank").First(&pixKey, "kind = ? and key = ?", kind, key)
 	if pixKey.ID == "" {
-		return nil, fmt.Errorf("No key found.")
+		return nil, fmt.Errorf("no key found")
 	} 
 
 	return &pixKey, nil 
 }
 
-func(r PixKeyDbRepository) FinAccount(id string) (*model.Account error) {
+func(r PixKeyDbRepository) FinAccount(id string) (*model.Account, error) {
 	var account model.Account
 
 	r.Db.Preload("Bank").First(&account, "id = ?", id)
 	if account.ID == "" {
-		return nil, fmt.Errorf("No account found.")
+		return nil, fmt.Errorf("no account found")
 	} 
 
 	return &account, nil 
 }
 
-func(r PixKeyDbRepository) FindKeyByKind(key string, kind string) (*model.PixKey error) {
-	var pixKey model.PixKey
+// func(r PixKeyDbRepository) FindKeyByKind(key string, kind string) (*model.PixKey, error) {
+// 	var pixKey model.PixKey
 
-	r.Db.Preload("Account.Bank").First(&pixKey, "kind = ? and key = ?", kind, key)
-	if pixKey.ID == "" {
-		return nil, fmt.Errorf("No key found.")
-	} 
+// 	r.Db.Preload("Account.Bank").First(&pixKey, "kind = ? and key = ?", kind, key)
+// 	if pixKey.ID == "" {
+// 		return nil, fmt.Errorf("no key found")
+// 	} 
 
-	return &pixKey, nil 
-}
+// 	return &pixKey, nil 
+// }
 
-func(r PixKeyDbRepository) FinBank(id string) (*model.Bank error) {
+func(r PixKeyDbRepository) FinBank(id string) (*model.Bank, error) {
 	var bank model.Bank
 
 	r.Db.First(&bank, "id = ?", id)
 	if bank.ID == "" {
-		return nil, fmt.Errorf("No bank found.")
+		return nil, fmt.Errorf("no bank found")
 	} 
 
 	return &bank, nil 
