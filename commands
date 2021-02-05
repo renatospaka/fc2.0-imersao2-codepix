@@ -1,0 +1,25 @@
+## inicia e finaliza os contêineres
+docker-compose start
+docker-compose stop
+
+## inicia o contêiner da aplicação
+docker exec -it codepix-center bash
+
+## na raiz do contêiner => /go/src#
+go run cmd/main.go
+
+## chamama evans na raiz do contêiner
+evans -r repl
+||
+\/
+call RegisterPixKey
+
+## cobra command line ==>  na raiz do contêiner
+import "github.com/spf13/cobra"
+
+cobra init --pkg-name codepix
+cobra add grpc
+
+## grpc sendo chamado via cobra
+go run main.go grpc
+go run main.go grpc --port 50052
