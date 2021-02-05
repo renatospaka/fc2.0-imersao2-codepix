@@ -5,6 +5,7 @@ services:
     build: .
     volumes:
       - .:/go/src/
+    container_name: codepix-center
 
   db:
     image: postgres:13
@@ -12,6 +13,7 @@ services:
     tty: true
     volumes:
       - .pgdata:/var/lib/postgresql/data
+    container_name: codepix-data
     environment:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=codepix
@@ -22,6 +24,7 @@ services:
     image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    container_name: codepix-zookeeper
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -38,6 +41,7 @@ services:
       KAFKA_LISTENERS: INTERNAL://:9092,OUTSIDE://:9094
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://host.docker.internal:9094
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+    container_name: codepix-kafka
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
 
@@ -52,6 +56,7 @@ services:
       kafka-topics --create --topic=transaction-confirmation --if-not-exists --bootstrap-server=kafka:9092 &&
       kafka-topics --create --topic=bank001 --if-not-exists --bootstrap-server=kafka:9092 &&
       kafka-topics --create --topic=bank002 --if-not-exists --bootstrap-server=kafka:9092"
+    container_name: codepix-topic-generator
     extra_hosts:
       - "host.docker.internal:172.17.0.1"
 
@@ -66,6 +71,7 @@ services:
       CONTROL_CENTER_BOOTSTRAP_SERVERS: 'kafka:9092'
       CONTROL_CENTER_REPLICATION_FACTOR: 1
       PORT: 9021
+    container_name: codepix-control-center
 
   pgadmin:
     image: dpage/pgadmin4
@@ -73,6 +79,7 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=admin@user.com
       - PGADMIN_DEFAULT_PASSWORD=123456
+    container_name: codepix-pgadmin
     ports:
       - 9000:80
     depends_on:

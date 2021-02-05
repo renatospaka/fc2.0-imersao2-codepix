@@ -1,0 +1,5 @@
+## inicia o contêiner da aplicação
+docker exec -it codepix-center bash
+
+## na raiz do contêiner => /go/src#
+go run cmd/main.go
