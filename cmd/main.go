@@ -14,6 +14,4 @@ func main() {
 	database = db.ConnectDB(os.Getenv("env"))
 	grpc.StartGrpcServer(database, 50051)
 	//50051 é a porta padrão do gRPC
-
-
 }
