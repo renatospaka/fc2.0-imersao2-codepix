@@ -34,17 +34,23 @@ func (p *PixGrpcService) Find(ctx context.Context, in *pb.PixKey) (*pb.PixKeyInf
 	}
 
 	return &pb.PixKeyInfo{
-		id: pixKey.ID,
-		kind: pixKey.Kind,
-		key: pixKey.Key
-		account: &pb.Account{
-			accountId: pixKey.AccountID,
-			accountNumber: pixKey.Account.Number,
-			bankId: pixKey.Account.BankID,
-			bankName: pixKey.Account.BankName, 
-			ownerName: pixKey.Account.OwnerName,
-			createdAt: pixKey.Account.CreatedAt.String(),
-		}
-		createdAt: pixKey.CreatedAt.String(),
+		Id: pixKey.ID,
+		Kind: pixKey.Kind,
+		Key: pixKey.Key,
+		Account: &pb.Account{
+			AccountId: pixKey.AccountID,
+			AccountNumber: pixKey.Account.Number,
+			BankId: pixKey.Account.BankID,
+			BankName: pixKey.Account.Bank.Name, 
+			OwnerName: pixKey.Account.OwnerName,
+			CreatedAt: pixKey.Account.CreatedAt.String(),
+		},
+		CreatedAt: pixKey.CreatedAt.String(),
 	}, nil
+}
+
+func NewPixGrpcService(usecase usecase.PixUseCase) *PixGrpcService {
+	return &PixGrpcService{
+		PixUseCase: usecase,
+	}
 }

@@ -1,3 +1,7 @@
+## inicia e finaliza os contêineres
+docker-compose start
+docker-compose stop
+
 ## inicia o contêiner da aplicação
 docker exec -it codepix-center bash
 
