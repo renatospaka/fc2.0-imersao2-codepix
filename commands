@@ -19,7 +19,16 @@ import "github.com/spf13/cobra"
 
 cobra init --pkg-name codepix
 cobra add grpc
+cobra add kafka
 
 ## grpc sendo chamado via cobra
 go run main.go grpc
 go run main.go grpc --port 50052
+
+## kafka sendo chamado via cobra
+go run main.go kafka
+
+## inicia o contêiner do kafka
+docker exec -it codepix-kafka bash
+kafka-topics --list --bootstrap-server=localhost:9092 
+kafka-console-consumer --topic=teste --bootstrap-server=localhost:9092 
