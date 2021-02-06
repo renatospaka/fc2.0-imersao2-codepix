@@ -16,8 +16,11 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/renatospaka/imersao/codepix-go/application/kafka"
+	"os"
+
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/renatospaka/imersao/codepix-go/application/kafka"
+	"github.com/renatospaka/imersao/codepix-go/infrastructure/db"
 	"github.com/spf13/cobra"
 )
 
@@ -29,8 +32,13 @@ var kafkaCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		deliveryChan := make(chan ckafka.Event)
 		producer := kafka.NewKafkaProducer()
-		kafka.Publish("Olá Kafka", "teste", producer, deliveryChan)
-		kafka.DeliveryReport(deliveryChan)
+		database := db.ConnectDB(os.Getenv("env"))
+		
+		kafka.Publish("Olá Palhaços", "teste", producer, deliveryChan)
+		go kafka.DeliveryReport(deliveryChan)
+
+		kafkaProcessor := kafka.NewKafkaProcessor(database, producer, deliveryChan)
+		kafkaProcessor.Consume()
 	},
 }
 
