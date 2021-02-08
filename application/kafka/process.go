@@ -30,7 +30,7 @@ func (k *KafkaProcessor) Consume() {
 	configMap := &ckafka.ConfigMap{
 		"bootstrap.servers": os.Getenv("kafkaBootstrapServers"),
 		"group.id":          os.Getenv("kafkaConsumerGroupId"),
-		"auto.offset.reset": os.Getenv("kafkaBootstrapServers"),
+		"auto.offset.reset": "earliest",
 	}
 
 	//configura o consumidor
