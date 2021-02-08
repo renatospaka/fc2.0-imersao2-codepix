@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"fmt"
+	"os"
 
 	ckafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/jinzhu/gorm"
@@ -27,9 +28,9 @@ func NewKafkaProcessor(database *gorm.DB, producer *ckafka.Producer, deliveryCha
 
 func (k *KafkaProcessor) Consume() {
 	configMap := &ckafka.ConfigMap{
-		"bootstrap.servers": "kafka:9092",
-		"group.id":          "consumergroup",
-		"auto.offset.reset": "earliest",
+		"bootstrap.servers": os.Getenv("kafkaBootstrapServers"),
+		"group.id":          os.Getenv("kafkaConsumerGroupId"),
+		"auto.offset.reset": os.Getenv("kafkaBootstrapServers"),
 	}
 
 	//configura o consumidor
@@ -39,7 +40,7 @@ func (k *KafkaProcessor) Consume() {
 	}
 
 	//identifica quais tópicos consumir
-	topics := []string{"teste"}
+	topics := []string{os.Getenv("kafkaTransactionTopic"), os.Getenv("kafkaTransactionConfirmationTopic")}
 	c.SubscribeTopics(topics, nil)
 
 	//lê as mensagens indefinidadmente (timeout = -1)
@@ -118,6 +119,11 @@ func (k *KafkaProcessor) processTransactionConfirmation(msg *ckafka.Message) err
 	transactionUseCase := factory.TransactionUseCaseFactory(k.Database)
 	if transaction.Status == model.TransactionConfirmed {
 		err = k.confirmTransaction(transaction, transactionUseCase)
+		if err != nil {
+			return err
+		}
+	} else if transaction.Status == model.TransactionCompleted {
+		_, err = transactionUseCase.Complete(transaction.ID)
 		if err != nil {
 			return err
 		}
