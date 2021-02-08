@@ -20,6 +20,7 @@ import "github.com/spf13/cobra"
 cobra init --pkg-name codepix
 cobra add grpc
 cobra add kafka
+cobra add all
 
 ## grpc sendo chamado via cobra
 go run main.go grpc
